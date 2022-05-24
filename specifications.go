@@ -165,16 +165,18 @@ func (s Specification[Leaf]) Zero() bool {
 }
 
 // Evaluate uses an Evaluator to convert a Specification an Output type.
+//
+// Evaluate panics if spec is a zero-value specification.
 func Evaluate[Leaf, Output any](
 	spec Specification[Leaf],
 	ev Evaluator[Leaf, Output],
 ) Output {
 
-	opsLeft, stack := spec.ops, make([]Output, 0, 20)
-
-	if len(opsLeft) == 0 {
+	if spec.Zero() {
 		panic("Evaluate: cannot evaluate the zero specification")
 	}
+
+	opsLeft, stack := spec.ops, make([]Output, 0, 20)
 
 	for len(opsLeft) > 0 {
 
